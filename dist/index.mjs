@@ -144,7 +144,7 @@ var openMajorityGameHtml = `<!DOCTYPE html>
   <p class="wait-sub">Waiting for next question...</p>
   <div class="answer-preview" id="answer-preview"></div>
   <div class="wait-countdown" id="wait-countdown" style="display:none">
-    <div class="wait-countdown-label">Next question in</div>
+    <div class="wait-countdown-label" id="wait-countdown-label">Next question in</div>
     <div class="wait-countdown-time" id="wait-countdown-time">0s</div>
     <div class="wait-countdown-bar"><div class="wait-countdown-fill" id="wait-countdown-fill"></div></div>
   </div>
@@ -267,6 +267,9 @@ var openMajorityGameHtml = `<!DOCTYPE html>
 
     // Show waiting screen with answer preview (keep timer running for countdown)
     document.getElementById('answer-preview').textContent = '"' + text + '"';
+    var isLast = state.currentQuestion && state.totalQuestions && (state.currentQuestion.orderIndex + 1) >= state.totalQuestions;
+    document.getElementById('wait-countdown-label').textContent = isLast ? 'Game ends in' : 'Next question in';
+    document.querySelector('#waiting .wait-sub').textContent = isLast ? 'Waiting for game to end...' : 'Waiting for next question...';
     showScreen('waiting');
   }
 
@@ -434,8 +437,10 @@ var openMajorityGameHtml = `<!DOCTYPE html>
         stopTimer();
         if (!state.submitted && state.currentQuestion) {
           // Didn't answer in time \u2014 show waiting
-          showScreen('waiting');
+          var isLastQ = state.currentQuestion && state.totalQuestions && (state.currentQuestion.orderIndex + 1) >= state.totalQuestions;
+          document.querySelector('#waiting .wait-sub').textContent = isLastQ ? 'Waiting for game to end...' : 'Waiting for next question...';
           document.getElementById('answer-preview').textContent = '(No answer submitted)';
+          showScreen('waiting');
         }
         // Disable input
         answerInput.disabled = true;
