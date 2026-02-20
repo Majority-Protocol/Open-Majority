@@ -82,7 +82,6 @@ var openMajorityGameHtml = `<!DOCTYPE html>
   .results-header { text-align: center; margin-bottom: 24px; }
   .results-header h1 { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
   .total-score { font-size: 40px; font-weight: 900; background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .total-score-label { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; }
 
   .result-card {
     width: 100%; max-width: 440px; margin-bottom: 16px; padding: 16px 20px; border-radius: 16px;
@@ -95,18 +94,42 @@ var openMajorityGameHtml = `<!DOCTYPE html>
 
   .cluster-list { display: flex; flex-direction: column; gap: 6px; }
   .cluster-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.03); }
-  .cluster-item.majority { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); }
+  .cluster-item.rank-1 { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); }
+  .cluster-item.rank-2 { background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.15); }
+  .cluster-item.rank-3 { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.12); }
   .cluster-bar-wrap { flex: 1; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.08); overflow: hidden; }
-  .cluster-bar { height: 100%; border-radius: 3px; background: rgba(255,255,255,0.25); transition: width 0.5s ease; }
-  .cluster-item.majority .cluster-bar { background: #22c55e; }
+  .cluster-bar { height: 100%; border-radius: 3px; background: rgba(255,255,255,0.15); transition: width 0.5s ease; }
+  .cluster-item.rank-1 .cluster-bar { background: #22c55e; }
+  .cluster-item.rank-2 .cluster-bar { background: #6366f1; }
+  .cluster-item.rank-3 .cluster-bar { background: #f59e0b; }
   .cluster-label { font-size: 13px; font-weight: 600; min-width: 100px; }
   .cluster-count { font-size: 12px; color: rgba(255,255,255,0.4); min-width: 30px; text-align: right; }
-  .majority-badge { font-size: 10px; background: #22c55e; color: #fff; padding: 2px 8px; border-radius: 8px; font-weight: 700; text-transform: uppercase; }
+  .rank-badge { font-size: 10px; padding: 2px 8px; border-radius: 8px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+  .rank-badge.rank-1 { background: #22c55e; color: #fff; }
+  .rank-badge.rank-2 { background: #6366f1; color: #fff; }
+  .rank-badge.rank-3 { background: #f59e0b; color: #fff; }
+  .rank-badge.rank-4 { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.6); }
+  .rank-badge.rank-5 { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.4); }
+  .xp-label { font-size: 11px; color: rgba(255,255,255,0.35); font-weight: 600; white-space: nowrap; }
 
   .score-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 700; margin-top: 8px; }
   .score-badge.win { background: rgba(34,197,94,0.15); color: #22c55e; }
   .score-badge.miss { background: rgba(239,68,68,0.1); color: #ef4444; }
-  .score-badge.partial { background: rgba(245,158,11,0.1); color: #f59e0b; }
+  .score-badge.rank-2 { background: rgba(99,102,241,0.12); color: #818cf8; }
+  .score-badge.rank-3 { background: rgba(245,158,11,0.1); color: #f59e0b; }
+  .score-badge.rank-low { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); }
+
+  .total-score-label { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; }
+  .leaderboard { width: 100%; max-width: 440px; margin-top: 16px; }
+  .leaderboard-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+  .lb-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 10px; margin-bottom: 4px; background: rgba(255,255,255,0.03); }
+  .lb-row.me { background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); }
+  .lb-rank { font-size: 14px; font-weight: 800; min-width: 28px; color: rgba(255,255,255,0.5); }
+  .lb-row:nth-child(1) .lb-rank { color: #22c55e; }
+  .lb-row:nth-child(2) .lb-rank { color: #6366f1; }
+  .lb-row:nth-child(3) .lb-rank { color: #f59e0b; }
+  .lb-addr { flex: 1; font-size: 13px; color: rgba(255,255,255,0.6); overflow: hidden; text-overflow: ellipsis; }
+  .lb-score { font-size: 14px; font-weight: 700; color: #fff; }
 </style>
 </head>
 <body>
@@ -155,8 +178,10 @@ var openMajorityGameHtml = `<!DOCTYPE html>
   <div class="results-header">
     <h1>Game Over</h1>
     <div class="total-score" id="total-score">0</div>
-    <div class="total-score-label">Total Score</div>
+    <div class="total-score-label">Total XP</div>
+    <div id="player-rank" style="font-size:14px;color:rgba(255,255,255,0.5);margin-top:4px;"></div>
   </div>
+  <div id="leaderboard" class="leaderboard"></div>
   <div id="results-list"></div>
 </div>
 
@@ -294,8 +319,53 @@ var openMajorityGameHtml = `<!DOCTYPE html>
   submitBtn.addEventListener('click', submitAnswer);
 
   // \u2500\u2500 Render results \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+  var RANK_LABELS = { 1: '1st', 2: '2nd', 3: '3rd', 4: '4th', 5: '5th' };
+  var RANK_XP = { 1: 100, 2: 80, 3: 65, 4: 50, 5: 30 };
+
   function renderResults(data) {
-    document.getElementById('total-score').textContent = data.totalScore;
+    document.getElementById('total-score').textContent = (data.totalScore || 0) + ' XP';
+
+    // Player rank in leaderboard
+    var rankEl = document.getElementById('player-rank');
+    var scores = data.scores || [];
+    var myRank = null;
+    for (var si = 0; si < scores.length; si++) {
+      if (scores[si].rank && scores[si].userAddress === state.walletAddress) {
+        myRank = scores[si].rank;
+        break;
+      }
+    }
+    if (myRank) {
+      rankEl.textContent = (RANK_LABELS[myRank] || '#' + myRank) + ' Place out of ' + scores.length + ' players';
+    }
+
+    // Leaderboard
+    var lbContainer = document.getElementById('leaderboard');
+    lbContainer.innerHTML = '';
+    if (scores.length > 0) {
+      var title = document.createElement('div');
+      title.className = 'leaderboard-title';
+      title.textContent = 'Leaderboard';
+      lbContainer.appendChild(title);
+      scores.forEach(function(s) {
+        var row = document.createElement('div');
+        row.className = 'lb-row' + (s.userAddress === state.walletAddress ? ' me' : '');
+        var rk = document.createElement('span');
+        rk.className = 'lb-rank';
+        rk.textContent = '#' + s.rank;
+        row.appendChild(rk);
+        var addr = document.createElement('span');
+        addr.className = 'lb-addr';
+        addr.textContent = s.userAddress === state.walletAddress ? 'You' : (s.userAddress.slice(0, 6) + '...' + s.userAddress.slice(-4));
+        row.appendChild(addr);
+        var sc = document.createElement('span');
+        sc.className = 'lb-score';
+        sc.textContent = s.totalScore + ' XP';
+        row.appendChild(sc);
+        lbContainer.appendChild(row);
+      });
+    }
+
     var list = document.getElementById('results-list');
     list.innerHTML = '';
 
@@ -326,23 +396,34 @@ var openMajorityGameHtml = `<!DOCTYPE html>
         card.appendChild(ans);
       }
 
-      // Clusters
+      // Clusters \u2014 already sorted by rank from server
       var cl = document.createElement('div');
       cl.className = 'cluster-list';
-      (q.clusters || []).sort(function(a,b) { return b.count - a.count; }).forEach(function(c) {
+      (q.clusters || []).forEach(function(c) {
+        var rank = c.rank || 99;
         var item = document.createElement('div');
-        item.className = 'cluster-item' + (c.isMajority ? ' majority' : '');
+        item.className = 'cluster-item' + (rank <= 3 ? ' rank-' + rank : '');
+
+        // Rank badge
+        if (rank <= 5) {
+          var rb = document.createElement('span');
+          rb.className = 'rank-badge rank-' + rank;
+          rb.textContent = RANK_LABELS[rank] || '#' + rank;
+          item.appendChild(rb);
+        }
 
         var lbl = document.createElement('span');
         lbl.className = 'cluster-label';
         lbl.textContent = c.canonicalAnswer;
         item.appendChild(lbl);
 
-        if (c.isMajority) {
-          var mb = document.createElement('span');
-          mb.className = 'majority-badge';
-          mb.textContent = 'majority';
-          item.appendChild(mb);
+        // XP label
+        var xp = RANK_XP[rank];
+        if (xp) {
+          var xpEl = document.createElement('span');
+          xpEl.className = 'xp-label';
+          xpEl.textContent = '+' + xp + ' XP';
+          item.appendChild(xpEl);
         }
 
         var bw = document.createElement('div');
@@ -362,21 +443,24 @@ var openMajorityGameHtml = `<!DOCTYPE html>
       });
       card.appendChild(cl);
 
-      // Score badge
+      // Score badge for this question
       var badge = document.createElement('div');
       badge.className = 'score-badge';
       if (q.userScore >= 100) {
         badge.className += ' win';
-        badge.textContent = '+' + q.userScore + ' pts \u2014 In the majority!';
+        badge.textContent = '+' + q.userScore + ' XP \u2014 Majority answer!';
+      } else if (q.userScore >= 65) {
+        badge.className += ' rank-2';
+        badge.textContent = '+' + q.userScore + ' XP \u2014 ' + (q.userScore === 80 ? '2nd' : '3rd') + ' most popular';
       } else if (q.userScore > 0) {
-        badge.className += ' partial';
-        badge.textContent = '+' + q.userScore + ' pt \u2014 Answered';
+        badge.className += ' rank-low';
+        badge.textContent = '+' + q.userScore + ' XP';
       } else if (q.userAnswer) {
         badge.className += ' miss';
-        badge.textContent = '0 pts \u2014 Not in majority';
+        badge.textContent = '0 XP \u2014 Not in top 5';
       } else {
         badge.className += ' miss';
-        badge.textContent = '0 pts \u2014 No answer';
+        badge.textContent = '0 XP \u2014 No answer';
       }
       card.appendChild(badge);
 
