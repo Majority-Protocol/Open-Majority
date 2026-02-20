@@ -84,6 +84,11 @@ export const openMajorityGameHtml = `<!DOCTYPE html>
   #waiting h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
   #waiting .wait-sub { color: rgba(255,255,255,0.5); font-size: 14px; }
   .answer-preview { margin-top: 16px; padding: 12px 20px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); font-size: 15px; color: rgba(255,255,255,0.7); max-width: 350px; text-align: center; word-break: break-word; }
+  .wait-countdown { margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .wait-countdown-label { font-size: 12px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+  .wait-countdown-time { font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .wait-countdown-bar { width: 200px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.1); overflow: hidden; }
+  .wait-countdown-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #818cf8, #c084fc); transition: width 0.25s linear; }
 
   /* ── Results ────────────────────────────────────────────────────── */
   #results { justify-content: flex-start; padding-top: 24px; overflow-y: auto; }
@@ -151,6 +156,11 @@ export const openMajorityGameHtml = `<!DOCTYPE html>
   <h2>Answer Submitted!</h2>
   <p class="wait-sub">Waiting for next question...</p>
   <div class="answer-preview" id="answer-preview"></div>
+  <div class="wait-countdown" id="wait-countdown" style="display:none">
+    <div class="wait-countdown-label">Next question in</div>
+    <div class="wait-countdown-time" id="wait-countdown-time">0s</div>
+    <div class="wait-countdown-bar"><div class="wait-countdown-fill" id="wait-countdown-fill"></div></div>
+  </div>
 </div>
 
 <!-- Results screen -->
@@ -236,6 +246,18 @@ export const openMajorityGameHtml = `<!DOCTYPE html>
     bar.className = 'timer-bar' + (isWarning ? ' warning' : '');
     secs.className = 'timer-seconds' + (isWarning ? ' warning' : '');
     secs.textContent = Math.ceil(state.timeLeft) + 's';
+
+    // Update waiting screen countdown if visible
+    var waitCountdown = document.getElementById('wait-countdown');
+    var waitTime = document.getElementById('wait-countdown-time');
+    var waitFill = document.getElementById('wait-countdown-fill');
+    if (state.submitted && state.timeLeft > 0) {
+      waitCountdown.style.display = 'flex';
+      waitTime.textContent = Math.ceil(state.timeLeft) + 's';
+      waitFill.style.width = pct + '%';
+    } else {
+      waitCountdown.style.display = 'none';
+    }
   }
 
   // ── Submit answer ─────────────────────────────────────────────────
@@ -256,10 +278,9 @@ export const openMajorityGameHtml = `<!DOCTYPE html>
     // Tell parent
     postMsg({ type: 'ANSWER_SUBMIT', questionId: answer.questionId, answerText: answer.answerText, submittedAt: answer.submittedAt });
 
-    // Show waiting screen with answer preview
+    // Show waiting screen with answer preview (keep timer running for countdown)
     document.getElementById('answer-preview').textContent = '"' + text + '"';
     showScreen('waiting');
-    stopTimer();
   }
 
   // ── Input handlers ────────────────────────────────────────────────
