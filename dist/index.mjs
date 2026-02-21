@@ -78,58 +78,82 @@ var openMajorityGameHtml = `<!DOCTYPE html>
   .wait-countdown-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #818cf8, #c084fc); transition: width 0.25s linear; }
 
   /* \u2500\u2500 Results \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-  #results { justify-content: flex-start; padding-top: 24px; overflow-y: auto; }
-  .results-header { text-align: center; margin-bottom: 24px; }
-  .results-header h1 { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
-  .total-score { font-size: 40px; font-weight: 900; background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  #results { justify-content: flex-start; padding-top: 20px; overflow-y: auto; }
+
+  .results-header { text-align: center; margin-bottom: 20px; position: relative; }
+  .results-header h1 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
+
+  .rank-display { margin-bottom: 6px; }
+  .rank-display .rank-icon { font-size: 36px; line-height: 1; display: block; margin-bottom: 4px; }
+  .rank-display .rank-text { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+  .rank-display .rank-text.top-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .rank-display .rank-text.top-2 { background: linear-gradient(135deg, #818cf8, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .rank-display .rank-text.top-3 { background: linear-gradient(135deg, #f59e0b, #d97706); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .rank-display .rank-text.top-other { color: rgba(255,255,255,0.7); }
+  .rank-display .rank-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+  .total-score { font-size: 48px; font-weight: 900; background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; }
+  .total-score-label { font-size: 12px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
+
+  .score-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; background: radial-gradient(circle, rgba(251,191,36,0.08) 0%, transparent 70%); pointer-events: none; z-index: -1; }
+
+  .leaderboard { width: 100%; max-width: 440px; margin-top: 12px; }
+  .leaderboard-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255,255,255,0.4); margin-bottom: 8px; padding-left: 4px; }
+  .lb-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 10px; margin-bottom: 4px; background: rgba(255,255,255,0.03); }
+  .lb-row.me { background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); }
+  .lb-rank { font-size: 14px; font-weight: 800; min-width: 28px; color: rgba(255,255,255,0.5); }
+  .lb-row.lb-rank-1 .lb-rank { color: #fbbf24; }
+  .lb-row.lb-rank-2 .lb-rank { color: #818cf8; }
+  .lb-row.lb-rank-3 .lb-rank { color: #f59e0b; }
+  .lb-addr { flex: 1; font-size: 13px; color: rgba(255,255,255,0.6); overflow: hidden; text-overflow: ellipsis; }
+  .lb-score { font-size: 14px; font-weight: 700; color: #fff; }
+
+  /* \u2500\u2500 Question Breakdown (collapsible) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+  .breakdown-toggle { width: 100%; max-width: 440px; margin-top: 16px; padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 14px; font-weight: 700; transition: background 0.2s; }
+  .breakdown-toggle:hover { background: rgba(255,255,255,0.07); }
+  .breakdown-toggle .toggle-label { display: flex; align-items: center; gap: 8px; }
+  .breakdown-toggle .toggle-arrow { font-size: 12px; color: rgba(255,255,255,0.4); transition: transform 0.3s ease; }
+  .breakdown-toggle.open .toggle-arrow { transform: rotate(180deg); }
+
+  .breakdown-content { width: 100%; max-width: 440px; overflow: hidden; max-height: 0; transition: max-height 0.4s ease; }
+  .breakdown-content.open { max-height: 5000px; }
+  .breakdown-content-inner { padding-top: 12px; }
 
   .result-card {
-    width: 100%; max-width: 440px; margin-bottom: 16px; padding: 16px 20px; border-radius: 16px;
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    width: 100%; margin-bottom: 12px; padding: 14px 16px; border-radius: 14px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
   }
-  .result-card .q-label { font-size: 12px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-  .result-card .q-text { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
-  .result-card .your-answer { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 10px; }
+  .result-card .q-label { font-size: 11px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .result-card .q-text { font-size: 15px; font-weight: 600; margin-bottom: 10px; line-height: 1.4; }
+  .result-card .your-answer { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
   .result-card .your-answer strong { color: #fff; }
 
-  .cluster-list { display: flex; flex-direction: column; gap: 6px; }
-  .cluster-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.03); }
+  .cluster-list { display: flex; flex-direction: column; gap: 5px; }
+  .cluster-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 8px; background: rgba(255,255,255,0.03); }
   .cluster-item.rank-1 { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); }
   .cluster-item.rank-2 { background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.15); }
   .cluster-item.rank-3 { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.12); }
-  .cluster-bar-wrap { flex: 1; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .cluster-bar-wrap { flex: 1; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.08); overflow: hidden; }
   .cluster-bar { height: 100%; border-radius: 3px; background: rgba(255,255,255,0.15); transition: width 0.5s ease; }
   .cluster-item.rank-1 .cluster-bar { background: #22c55e; }
   .cluster-item.rank-2 .cluster-bar { background: #6366f1; }
   .cluster-item.rank-3 .cluster-bar { background: #f59e0b; }
-  .cluster-label { font-size: 13px; font-weight: 600; min-width: 100px; }
-  .cluster-count { font-size: 12px; color: rgba(255,255,255,0.4); min-width: 30px; text-align: right; }
-  .rank-badge { font-size: 10px; padding: 2px 8px; border-radius: 8px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+  .cluster-label { font-size: 12px; font-weight: 600; min-width: 80px; }
+  .cluster-count { font-size: 11px; color: rgba(255,255,255,0.4); min-width: 24px; text-align: right; }
+  .rank-badge { font-size: 9px; padding: 2px 7px; border-radius: 6px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
   .rank-badge.rank-1 { background: #22c55e; color: #fff; }
   .rank-badge.rank-2 { background: #6366f1; color: #fff; }
   .rank-badge.rank-3 { background: #f59e0b; color: #fff; }
   .rank-badge.rank-4 { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.6); }
   .rank-badge.rank-5 { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.4); }
-  .xp-label { font-size: 11px; color: rgba(255,255,255,0.35); font-weight: 600; white-space: nowrap; }
+  .xp-label { font-size: 10px; color: rgba(255,255,255,0.35); font-weight: 600; white-space: nowrap; }
 
-  .score-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 700; margin-top: 8px; }
+  .score-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; margin-top: 6px; }
   .score-badge.win { background: rgba(34,197,94,0.15); color: #22c55e; }
   .score-badge.miss { background: rgba(239,68,68,0.1); color: #ef4444; }
   .score-badge.rank-2 { background: rgba(99,102,241,0.12); color: #818cf8; }
   .score-badge.rank-3 { background: rgba(245,158,11,0.1); color: #f59e0b; }
   .score-badge.rank-low { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); }
-
-  .total-score-label { font-size: 13px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; }
-  .leaderboard { width: 100%; max-width: 440px; margin-top: 16px; }
-  .leaderboard-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
-  .lb-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 10px; margin-bottom: 4px; background: rgba(255,255,255,0.03); }
-  .lb-row.me { background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); }
-  .lb-rank { font-size: 14px; font-weight: 800; min-width: 28px; color: rgba(255,255,255,0.5); }
-  .lb-row:nth-child(1) .lb-rank { color: #22c55e; }
-  .lb-row:nth-child(2) .lb-rank { color: #6366f1; }
-  .lb-row:nth-child(3) .lb-rank { color: #f59e0b; }
-  .lb-addr { flex: 1; font-size: 13px; color: rgba(255,255,255,0.6); overflow: hidden; text-overflow: ellipsis; }
-  .lb-score { font-size: 14px; font-weight: 700; color: #fff; }
 </style>
 </head>
 <body>
@@ -176,13 +200,24 @@ var openMajorityGameHtml = `<!DOCTYPE html>
 <!-- Results screen -->
 <div id="results" class="screen hidden">
   <div class="results-header">
-    <h1>Game Over</h1>
+    <div class="score-glow"></div>
+    <h1>Your Score</h1>
     <div class="total-score" id="total-score">0</div>
     <div class="total-score-label">Total XP</div>
-    <div id="player-rank" style="font-size:14px;color:rgba(255,255,255,0.5);margin-top:4px;"></div>
+    <div class="rank-display" id="rank-display" style="display:none">
+      <span class="rank-icon" id="rank-icon"></span>
+      <div class="rank-text" id="rank-text"></div>
+      <div class="rank-sub" id="rank-sub"></div>
+    </div>
   </div>
   <div id="leaderboard" class="leaderboard"></div>
-  <div id="results-list"></div>
+  <div class="breakdown-toggle" id="breakdown-toggle" style="display:none">
+    <span class="toggle-label">Question Breakdown</span>
+    <span class="toggle-arrow">&#9660;</span>
+  </div>
+  <div class="breakdown-content" id="breakdown-content">
+    <div class="breakdown-content-inner" id="results-list"></div>
+  </div>
 </div>
 
 <script>
@@ -325,8 +360,7 @@ var openMajorityGameHtml = `<!DOCTYPE html>
   function renderResults(data) {
     document.getElementById('total-score').textContent = (data.totalScore || 0) + ' XP';
 
-    // Player rank in leaderboard
-    var rankEl = document.getElementById('player-rank');
+    // Player rank
     var scores = data.scores || [];
     var myRank = null;
     for (var si = 0; si < scores.length; si++) {
@@ -335,8 +369,16 @@ var openMajorityGameHtml = `<!DOCTYPE html>
         break;
       }
     }
+
+    var rankDisplay = document.getElementById('rank-display');
     if (myRank) {
-      rankEl.textContent = (RANK_LABELS[myRank] || '#' + myRank) + ' Place out of ' + scores.length + ' players';
+      rankDisplay.style.display = 'block';
+      var rankIcons = { 1: '\\u{1F3C6}', 2: '\\u{1F948}', 3: '\\u{1F949}' };
+      document.getElementById('rank-icon').textContent = rankIcons[myRank] || '';
+      var rankTextEl = document.getElementById('rank-text');
+      rankTextEl.textContent = (RANK_LABELS[myRank] || '#' + myRank) + ' Place';
+      rankTextEl.className = 'rank-text top-' + (myRank <= 3 ? myRank : 'other');
+      document.getElementById('rank-sub').textContent = 'out of ' + scores.length + ' players';
     }
 
     // Leaderboard
@@ -349,7 +391,10 @@ var openMajorityGameHtml = `<!DOCTYPE html>
       lbContainer.appendChild(title);
       scores.forEach(function(s) {
         var row = document.createElement('div');
-        row.className = 'lb-row' + (s.userAddress === state.walletAddress ? ' me' : '');
+        var rowClasses = 'lb-row';
+        if (s.userAddress === state.walletAddress) rowClasses += ' me';
+        if (s.rank <= 3) rowClasses += ' lb-rank-' + s.rank;
+        row.className = rowClasses;
         var rk = document.createElement('span');
         rk.className = 'lb-rank';
         rk.textContent = '#' + s.rank;
@@ -364,6 +409,18 @@ var openMajorityGameHtml = `<!DOCTYPE html>
         row.appendChild(sc);
         lbContainer.appendChild(row);
       });
+    }
+
+    // Question breakdown toggle
+    var questions = data.questions || [];
+    var toggleBtn = document.getElementById('breakdown-toggle');
+    var breakdownContent = document.getElementById('breakdown-content');
+    if (questions.length > 0) {
+      toggleBtn.style.display = 'flex';
+      toggleBtn.onclick = function() {
+        toggleBtn.classList.toggle('open');
+        breakdownContent.classList.toggle('open');
+      };
     }
 
     var list = document.getElementById('results-list');
