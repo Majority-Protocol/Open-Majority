@@ -81,7 +81,12 @@ export type SessionEndMessage = {
   answeredCount: number;
 };
 
+export type NavigateBackMessage = {
+  type: "NAVIGATE_BACK";
+};
+
 export type GameToParentMessage =
   | SessionStartMessage
   | AnswerSubmitMessage
-  | SessionEndMessage;
+  | SessionEndMessage
+  | NavigateBackMessage;

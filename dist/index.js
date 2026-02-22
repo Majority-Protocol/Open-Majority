@@ -143,6 +143,9 @@ var openMajorityGameHtml = `<!DOCTYPE html>
   .breakdown-content.open { max-height: 5000px; }
   .breakdown-content-inner { padding-top: 12px; }
 
+  .back-btn { width: 100%; max-width: 440px; margin-top: 20px; padding: 14px 20px; border-radius: 12px; background: linear-gradient(135deg, #818cf8, #6366f1); border: none; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+  .back-btn:hover { opacity: 0.9; }
+
   .result-card {
     width: 100%; margin-bottom: 12px; padding: 14px 16px; border-radius: 14px;
     background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
@@ -242,6 +245,7 @@ var openMajorityGameHtml = `<!DOCTYPE html>
   <div class="breakdown-content" id="breakdown-content">
     <div class="breakdown-content-inner" id="results-list"></div>
   </div>
+  <button class="back-btn" id="back-btn" onclick="window.parent.postMessage({type:'NAVIGATE_BACK'},'*')">View Contest</button>
 </div>
 
 <script>
